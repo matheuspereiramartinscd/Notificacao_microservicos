@@ -1,5 +1,4 @@
 import pika
-import time
 
 from flask import Flask, request, jsonify
 
@@ -17,3 +16,6 @@ def send_notification():
     message = data.get('message', 'No message provided')
     channel.basic_publish(exchange='', routing_key='notifications', body=message)
     return jsonify({"status": "Notification queued"}), 200
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
