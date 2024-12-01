@@ -22,51 +22,93 @@ Este projeto tem como objetivo a automação do envio e recebimento de notifica�
 
 ## Como Rodar o Projeto
 
-### Instalação
+### 1. Clone o Repositório
 
-#### 1. **Clone o repositório**:
 ```bash
-git clone https://github.com/seuusuario/projeto.git
+git clone https://github.com/seu-usuario/projeto.git
 cd projeto
 ```
 
-#### 2. **Instale as dependências do Python**:
+### 2. Crie e Ative um Ambiente Virtual
 
-No diretório do projeto, crie e ative um ambiente virtual:
 ```bash
 python -m venv venv
-source venv/bin/activate  # No Windows, use: venv\Scriptsctivate
+source venv/bin/activate  # No Windows: venv\Scripts\activate
 ```
 
-Instale as dependências necessárias:
+### 3. Instale as Dependências
+
+Se o arquivo `requirements.txt` estiver presente:
+
 ```bash
 pip install -r requirements.txt
 ```
 
-#### 3. **Configuração do Docker**:
+Caso o arquivo `requirements.txt` não exista, crie um com o seguinte conteúdo:
 
-Certifique-se de ter o Docker e o Docker Compose instalados. Para instalar o Docker, siga as instruções no [site oficial](https://www.docker.com/products/docker-desktop).
+```makefile
+Flask==2.2.2
+pika==1.2.0
+```
 
-#### 4. **Rodando os Containers**:
+### 4. Rodando o Projeto com Docker
 
-Execute o seguinte comando para subir os containers do RabbitMQ, API principal e serviço de notificação:
+Se você estiver usando Docker para rodar os contêineres, o arquivo `docker-compose.yml` é fornecido para facilitar o setup.
+
 ```bash
 docker-compose up --build
 ```
 
-Os serviços serão iniciados e estarão disponíveis em:
-- **RabbitMQ Management Console**: http://localhost:15672 (usuário: guest, senha: guest)
-- **API Principal**: http://localhost:5000
+Isso irá iniciar o RabbitMQ, a API Principal e o Serviço de Notificação.
 
-#### 5. **Testando a API**:
+### 5. Testando a API com o Postman
 
-Use uma ferramenta como o [Postman](https://www.postman.com/) ou `curl` para enviar requisições POST para o endpoint `/send_notification`:
+#### 5.1 Enviar Notificação
 
-```bash
-curl -X POST http://localhost:5000/send_notification -H "Content-Type: application/json" -d '{"message": "Sua notificação foi processada!"}'
+Para testar a API no Postman, siga os seguintes passos:
+
+1. Abra o Postman.
+2. Crie uma nova requisição `POST` para o endpoint `/send_notification`:
+
+    - **URL**: `http://localhost:5000/send_notification`
+    - **Método**: `POST`
+    - **Body** (Formato JSON):
+    
+    ```json
+    {
+        "message": "Seu processo foi atualizado."
+    }
+    ```
+
+3. Clique em **Send**.
+
+#### 5.2 Resposta Esperada
+
+A resposta esperada será um status indicando que a mensagem foi colocada na fila do RabbitMQ:
+
+```json
+{
+    "status": "Notification queued"
+}
 ```
 
-Isso irá enviar a mensagem para a fila de notificações do RabbitMQ, que será consumida pelo serviço de notificação.
+#### 5.3 Consumir a Notificação
+
+O **Serviço de Notificação** irá consumir automaticamente as mensagens da fila RabbitMQ e processá-las. Ele irá exibir no log algo similar a:
+
+```
+INFO:root:Received message: Seu processo foi atualizado.
+```
+
+## Estrutura do Projeto
+
+- **api_principal/**: Contém o código da API principal.
+- **servico_notificacao/**: Contém o código para o serviço que consome as notificações.
+- **docker-compose.yml**: Arquivo para rodar os contêineres Docker.
+
+## Considerações Finais
+
+Este projeto proporciona uma integração simples entre Flask e RabbitMQ para envio e consumo de notificações. Com o uso de Docker, o processo de setup e execução foi simplificado. O Postman pode ser utilizado para testar facilmente a API.
 
 ## Estrutura do Projeto
 
