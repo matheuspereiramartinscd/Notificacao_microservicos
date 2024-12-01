@@ -1,5 +1,5 @@
 
-# Sistema de Automação de Notificações
+# Notificações
 
 Este projeto tem como objetivo a automação do envio e recebimento de notificações em um ambiente de microserviços. Utiliza RabbitMQ como sistema de filas para garantir o envio assíncrono e eficiente de mensagens entre os serviços, permitindo que diferentes partes da aplicação se comuniquem de maneira desacoplada.
 
